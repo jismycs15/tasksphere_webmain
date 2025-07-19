@@ -1,36 +1,44 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import UserService from "../../services/TaskService";
-import { Button } from "../../components/ui/button"; // Adjust path if needed
+import TaskService from "../../services/TaskService";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { Button } from "../../components/ui/button";
+import secureLocalStorage from "react-secure-storage";
+
+// Zod validation schema
+const createTaskSchema = z.object({
+  title: z.string().min(1, "Title is required"),
+  description: z.string().min(1, "Description is required"),
+  duration: z.string().min(1, "Duration is required"),
+  projectname: z.string().min(1, "Project Name is required"),
+});
+
+type CreateTaskFormValues = z.infer<typeof createTaskSchema>;
 
 function UpdateTaske() {
-  const { taskId } = useParams();
+  const { id } = useParams(); // 👈 this will be 'id' based on your routing
   const [taskData, setTaskData] = useState<any>(null);
+  const navigate = useNavigate();
 
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset,
-  } = useForm({
-    defaultValues: {
-      title: "",
-      description: "",
-      duration: "",
-      projectname: "",
-    },
+  } = useForm<CreateTaskFormValues>({
+    resolver: zodResolver(createTaskSchema),
   });
 
-  // Fetch the task by ID and set form values
+  // 🔄 Fetch task and set form values
   useEffect(() => {
     async function fetchTask() {
       try {
-        const task = await UserService.loginlist(taskId);
+        const task = await TaskService.gettaskdetail(id);
         setTaskData(task);
 
-        // Pre-fill form with fetched data
         reset({
           title: task.title,
           description: task.description,
@@ -42,22 +50,34 @@ function UpdateTaske() {
       }
     }
 
-    fetchTask();
-  }, [taskId, reset]);
+    if (id) {
+      fetchTask();
+    }
+  }, [id, reset]);
 
-  // Handle form submit
-  const onSubmit = async (data: any) => {
+  // ✅ Submit form
+  const onSubmit = async (values: CreateTaskFormValues) => {
+    const userid = secureLocalStorage.getItem("userId")
+    const payload = {
+      taskId: Number(id),
+      Taskname: values.title,
+      description: values.description,
+      createdby:Number(userid),
+      duration: parseInt(values.duration),
+      projectname: values.projectname,
+    };
+
     try {
-      await UserService.loginlist(taskId); // Update API
+      await TaskService.edittask(payload);
       alert("Task updated successfully!");
-      // Optional: redirect to task list
+      navigate("/tasklist");
     } catch (error) {
       console.error("Update failed", error);
       alert("Failed to update task");
     }
   };
 
-  // Reset form to original values
+  // 🔁 Reset to original values
   const onReset = () => {
     if (taskData) {
       reset({
@@ -70,7 +90,7 @@ function UpdateTaske() {
   };
 
   return (
-    <div className="max-w-3xl mx-auto mt-10 p-4 bg-white shadow rounded">
+    <div className="max-w-3xl mx-auto mt-10 p-4 rounded">
       <h2 className="text-xl font-semibold mb-6">Edit Task</h2>
 
       {taskData ? (
@@ -85,8 +105,8 @@ function UpdateTaske() {
               <input
                 id="title"
                 type="text"
-                {...register("title", { required: "Title is required" })}
-                className="mt-1 block w-full rounded-md border border-gray-300 shadow-sm p-2 focus:ring-indigo-500 focus:border-indigo-500"
+                {...register("title")}
+                className="mt-1 block w-full rounded-md border border-gray-300 shadow-sm p-2"
               />
               {errors.title && (
                 <p className="text-red-500 text-sm mt-1">{errors.title.message}</p>
@@ -101,8 +121,8 @@ function UpdateTaske() {
               <textarea
                 id="description"
                 rows={1}
-                {...register("description", { required: "Description is required" })}
-                className="mt-1 block w-full rounded-md border border-gray-300 shadow-sm p-2 focus:ring-indigo-500 focus:border-indigo-500"
+                {...register("description")}
+                className="mt-1 block w-full rounded-md border border-gray-300 shadow-sm p-2"
               />
               {errors.description && (
                 <p className="text-red-500 text-sm mt-1">{errors.description.message}</p>
@@ -120,8 +140,8 @@ function UpdateTaske() {
               <input
                 id="duration"
                 type="text"
-                {...register("duration", { required: "Duration is required" })}
-                className="mt-1 block w-full rounded-md border border-gray-300 shadow-sm p-2 focus:ring-indigo-500 focus:border-indigo-500"
+                {...register("duration")}
+                className="mt-1 block w-full rounded-md border border-gray-300 shadow-sm p-2"
               />
               {errors.duration && (
                 <p className="text-red-500 text-sm mt-1">{errors.duration.message}</p>
@@ -136,8 +156,8 @@ function UpdateTaske() {
               <input
                 id="projectname"
                 type="text"
-                {...register("projectname", { required: "Project Name is required" })}
-                className="mt-1 block w-full rounded-md border border-gray-300 shadow-sm p-2 focus:ring-indigo-500 focus:border-indigo-500"
+                {...register("projectname")}
+                className="mt-1 block w-full rounded-md border border-gray-300 shadow-sm p-2"
               />
               {errors.projectname && (
                 <p className="text-red-500 text-sm mt-1">{errors.projectname.message}</p>
@@ -145,9 +165,9 @@ function UpdateTaske() {
             </div>
           </div>
 
-          {/* Submit & Reset */}
+          {/* Buttons */}
           <div className="flex gap-4">
-            <Button type="submit" className="bg-indigo-600 text-white px-4 py-2 rounded">
+            <Button type="submit" className="bg-indigo-600 text-black px-4 py-2 rounded">
               Submit
             </Button>
             <Button type="button" variant="secondary" onClick={onReset}>

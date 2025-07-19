@@ -106,6 +106,49 @@ class Trackmanagementapi {
       throw error;
     }
   }
+  async deletetask(taskId: number): Promise<any> {
+    try {
+      const response = await axios.post(
+        `https://localhost:7286/api/TrackManagement/Deletetask?taskId=${taskId}`,
+        null, // ✅ explicitly no body
+        {
+          headers: {
+            accept: "text/plain",
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error deleting task:", error);
+      throw error;
+    }
+  }
+
+  async edittask(data: any): Promise<any> {
+    try {
+      const response = await axios.post(
+        "https://localhost:7286/api/TrackManagement/EditTask",
+        data
+      );
+      console.log("User created successfully:", response.data);
+      return response.data;
+    } catch (error) {
+      console.error("Error creating user:", error);
+      throw error;
+    }
+  }
+  async gettaskdetail(data: any): Promise<any> {
+    try {
+      const response = await axios.get(
+        `https://localhost:7286/api/TrackManagement/GetTaskdetail?taskid=${data}`
+      );
+      return response.data;
+    }
+    catch (error) {
+      console.error("Error creating user:", error);
+      throw error;
+    }
+  }
 }
 
 export default new Trackmanagementapi();

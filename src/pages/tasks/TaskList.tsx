@@ -1,6 +1,15 @@
 import React, { useEffect, useState } from "react";
-import UserService from "../../services/TaskService";
+import TaskService from "../../services/TaskService";
 import { useNavigate } from "react-router-dom";
+import dot from "../../assets/three_dot.png";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "../../components/ui/dropdown-menu";
 
 interface Task {
   id: number;
@@ -28,8 +37,8 @@ function TaskList() {
     async function fetchData() {
       try {
         const [userResponse, taskResponse] = await Promise.all([
-          UserService.getUserList(),
-          UserService.TaskList(),
+          TaskService.getUserList(),
+          TaskService.TaskList(),
         ]);
         console.log(taskResponse, "kkk");
         setUsers(userResponse); // Assumes response is an array of users
@@ -54,16 +63,17 @@ function TaskList() {
   };
 
   const handleEdit = (taskId: number) => {
-    navigate(`/edit-task/${taskId}`);
+    navigate(`/updatetask/${taskId}`);
   };
 
   const handleDelete = async (taskId: number) => {
     const confirmDelete = window.confirm(
       "Are you sure you want to delete this task?"
     );
+    console.log(taskId, "ppp")
     if (confirmDelete) {
       try {
-        await UserService.loginlist(taskId); // Call your API
+        await TaskService.deletetask(taskId); // Call your API
         setTasks((prev) => prev.filter((task) => task.id !== taskId)); // Remove from UI
         alert("Task deleted successfully");
       } catch (error) {
@@ -118,26 +128,29 @@ function TaskList() {
                     {getCreatorName(task.createdBy)}
                   </td>
                   <td className="px-4 py-2 flex gap-2">
-                    <button
-                      onClick={() => handleEdit(task.id)}
-                      className="text-blue-600 underline"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDelete(task.id)}
-                      className="text-red-600 underline"
-                    >
-                      Delete
-                    </button>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <div className="flex flex-col items-center justify-center gap-[3px] cursor-pointer">
+                          <span className="w-[4px] h-[4px] bg-black rounded-full"></span>
+                          <span className="w-[4px] h-[4px] bg-black rounded-full"></span>
+                          <span className="w-[4px] h-[4px] bg-black rounded-full"></span>
+                        </div>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent>
+                        <DropdownMenuLabel onClick={() => handleEdit(task.id)}>Edit</DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem onClick={() => handleDelete(task.id)}>Delete</DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </td>
+
                 </tr>
               ))
             )}
           </tbody>
         </table>
       </div>
-    </div>
+    </div >
   );
 }
 
