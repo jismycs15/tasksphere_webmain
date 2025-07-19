@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import UserService from "../../services/TaskService";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "../../components/ui/dropdown-menu";
 
 interface User {
   id: number;
@@ -34,8 +35,9 @@ function UserList() {
   return (
     <div className="p-15">
       <h2 className="text-2xl font-semibold mb-10">User List</h2>
+      <button>Assign Task</button>
       <div className="overflow-x-auto">
-        <table className="min-w-full bg-white border border-gray-200 shadow-md">
+        <table className="min-w-full bg-white  shadow-md">
           <thead>
             <tr className="bg-gray-100 text-left text-sm font-semibold text-gray-700">
               <th className="px-4 py-2 border">SL</th>
@@ -46,6 +48,7 @@ function UserList() {
               <th className="px-4 py-2 border">Createdate</th>
               <th className="px-4 py-2 border">Phonenumber</th>
               <th className="px-4 py-2 border">Emp ID</th>
+              <th className="px-4 py-2 border">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -58,7 +61,7 @@ function UserList() {
             ) : (
               users.map((user, index) => (
                 <tr key={user.id} className="text-sm hover:bg-gray-100">
-                  <th className="px-4 py-2 border">{index +1}</th>
+                  <th className="px-4 py-2 border">{index + 1}</th>
                   <td className="px-4 py-2 border">{user.fullname}</td>
                   <td className="px-4 py-2 border">{user.email}</td>
                   <td className="px-4 py-2 border">{user.role}</td>
@@ -70,6 +73,22 @@ function UserList() {
                   </td>
                   <td className="px-4 py-2 border">{user.phonenumber}</td>
                   <td className="px-4 py-2 border">{user.employeeid}</td>
+                  <td className="px-4 py-2 flex gap-2">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <div className="flex flex-col items-center justify-center gap-[3px] cursor-pointer">
+                          <span className="w-[4px] h-[4px] bg-black rounded-full"></span>
+                          <span className="w-[4px] h-[4px] bg-black rounded-full"></span>
+                          <span className="w-[4px] h-[4px] bg-black rounded-full"></span>
+                        </div>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent>
+                        <DropdownMenuLabel >Edit</DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem >Delete</DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </td>
                 </tr>
               ))
             )}

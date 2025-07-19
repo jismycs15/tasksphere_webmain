@@ -49,7 +49,9 @@ const CreateTask: React.FC = () => {
 };
 
 
-  const onReset = () => {};
+  const onReset = () => {
+     reset();
+  };
   return (
     <div className="mx-auto mt-10  p-6 rounded-lg  ">
       <h2 className="text-2xl font-bold mb-6">Create Task</h2>

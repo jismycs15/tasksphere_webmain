@@ -25,7 +25,8 @@ export default function App() {
           <Route path="/userlist" element={<UserList />} />
           <Route path="/createuser" element={<CreateUser />} />
           <Route path="/assighntask" element={<AssignTask />} />
-          <Route path="/Updatetask" element={<UpdateTask />} />
+          <Route path="/updatetask/:id" element={<UpdateTask />} />
+
           {/* Add other protected routes here */}
         </Route>
       </Routes> 
