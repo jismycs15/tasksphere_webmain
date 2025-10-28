@@ -44,10 +44,31 @@ class Trackmanagementapi {
       throw error;
     }
   }
-  async TaskList(): Promise<any> {
+async TaskList(
+  taskname?: string,
+  description?: string,
+  projectname?: string
+): Promise<any> {
+  try {
+    const response = await axios.get("https://localhost:7286/api/TrackManagement/GetTaskList", {
+      params: {
+        taskname: taskname || "",
+        description: description || "",
+        projectname: projectname || "",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching task list:", error);
+    throw error;
+  }
+}
+
+
+  async gettaskdetails(): Promise<any> {
     try {
       const response = await axios.get(
-        "https://localhost:7286/api/TrackManagement/GetTaskList"
+        "https://localhost:7286/api/TrackManagement/GetTaskName"
       );
       return response.data;
     } catch (error) {
@@ -81,10 +102,23 @@ class Trackmanagementapi {
     }
   }
 
-  async getassignedlist(): Promise<any> {
+  async getassignedlist(
+    title ?:string,
+    description?:string,
+    projectname?:string
+
+  ): Promise<any> {
     try {
       const response = await axios.get(
-        "https://localhost:7286/api/TrackManagement/GetTaskassignedList"
+        "https://localhost:7286/api/TrackManagement/GetTaskassignedList",{
+          params:{
+            title:title||"",
+           description:description||"",
+           projectname:projectname||"",
+
+          },
+
+        }
       );
       return response.data;
     } catch (error) {
@@ -143,12 +177,47 @@ class Trackmanagementapi {
         `https://localhost:7286/api/TrackManagement/GetTaskdetail?taskid=${data}`
       );
       return response.data;
-    }
-    catch (error) {
+    } catch (error) {
       console.error("Error creating user:", error);
       throw error;
     }
   }
+  async deleteuser(userId: number): Promise<any> {
+    try {
+      const response = await axios.post(
+        `https://localhost:7286/api/TrackManagement/Deleteuser?userid=${userId}`
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error deleting task:", error);
+      throw error;
+    }
+  }
+
+  async edituser(data: any): Promise<any> {
+    try {
+      const response = await axios.post(
+        "https://localhost:7286/api/TrackManagement/EditUser",
+        data
+      );
+      console.log("User created successfully:", response.data);
+      return response.data;
+    } catch (error) {
+      console.error("Error creating user:", error);
+      throw error;
+    }
+  }
+  async getuserbyid(id: any): Promise<any> {
+  try {
+    const response = await axios.get(
+      `https://localhost:7286/api/TrackManagement/GetUserDetailsByUserId?userid=${id}`
+    );
+    return response.data; // ✅ this already returns the JSON data
+  } catch (error) {
+    console.error("Error fetching user by id:", error);
+    throw error;
+  }
+}
 }
 
 export default new Trackmanagementapi();

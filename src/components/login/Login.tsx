@@ -69,7 +69,7 @@ export default function Home() {
 
         <button
           type="submit"
-          className="w-full text-black"
+          className="w-full text-black bg-amber-50"
         >
           Login
         </button>
