@@ -35,7 +35,6 @@ const CreateTask: React.FC = () => {
     createdby: userid,
     projectname: values.projectname,
   };
-  console.log(payload,"lll") 
   try {
     console.log("Sending payload:", payload); // helpful log
     const response = await createtask.CreateTask(payload);
@@ -53,8 +52,8 @@ const CreateTask: React.FC = () => {
      reset();
   };
   return (
-    <div className="mx-auto mt-10  p-6 rounded-lg  ">
-      <h2 className="text-2xl font-bold mb-6">Create Task</h2>
+    <div className="mx-auto mt-10  p-7 pt-1 rounded-lg  ">
+      <h2 className="text-4xl font-bold mb-6">Create Task</h2>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         {/* Row 1: Title & Description */}
         <div className="flex flex-col md:flex-row gap-4">
@@ -148,8 +147,8 @@ const CreateTask: React.FC = () => {
 
         {/* Submit Buttons */}
         <div className="flex gap-4">
-          <Button type="submit" className="text-black">Submit</Button>
-          <Button type="button" variant="secondary" onClick={onReset}>
+          <Button type="submit" className="text-white !bg-rose-800">Submit</Button>
+          <Button type="button" className="text-white !bg-rose-800"  onClick={onReset}>
             Reset
           </Button>
         </div>
